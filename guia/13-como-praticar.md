@@ -23,4 +23,4 @@ Prefira SQLite para começar: não exige servidor nem configuração.
 
 ---
 
-<p align="center"><a href="12-cola-e-glossario.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a></p>
+<p align="center"><a href="12-cola-e-glossario.md">← Anterior</a> · <a href="../README.md">Índice</a></p>

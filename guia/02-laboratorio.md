@@ -60,4 +60,4 @@ Repare que `pedidos.cliente_id` guarda o `id` de um cliente. É assim que as tab
 
 ---
 
-<p align="center"><a href="01-o-que-e-sql.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="03-select.md">Próximo →</a></p>
+<p align="center"><a href="01-o-que-e-sql.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="03-select.md">Próximo →</a></p>

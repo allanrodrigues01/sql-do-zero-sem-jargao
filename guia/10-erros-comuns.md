@@ -23,4 +23,4 @@ Ler a mensagem de erro ajuda mais do que parece: quase sempre ela aponta a linha
 
 ---
 
-<p align="center"><a href="09-criar-tabelas.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="11-exercicios.md">Próximo →</a></p>
+<p align="center"><a href="09-criar-tabelas.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="11-exercicios.md">Próximo →</a></p>

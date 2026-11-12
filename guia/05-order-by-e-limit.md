@@ -41,4 +41,4 @@ LIMIT 2;
 
 ---
 
-<p align="center"><a href="04-where.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="06-contar-somar-agrupar.md">Próximo →</a></p>
+<p align="center"><a href="04-where.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="06-contar-somar-agrupar.md">Próximo →</a></p>

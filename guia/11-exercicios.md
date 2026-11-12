@@ -147,4 +147,4 @@ HAVING SUM(p.valor) > 150;
 
 ---
 
-<p align="center"><a href="10-erros-comuns.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="12-cola-e-glossario.md">Próximo →</a></p>
+<p align="center"><a href="10-erros-comuns.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="12-cola-e-glossario.md">Próximo →</a></p>

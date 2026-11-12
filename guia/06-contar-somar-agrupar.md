@@ -66,4 +66,4 @@ HAVING SUM(valor) > 150;
 
 ---
 
-<p align="center"><a href="05-order-by-e-limit.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="07-join.md">Próximo →</a></p>
+<p align="center"><a href="05-order-by-e-limit.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="07-join.md">Próximo →</a></p>

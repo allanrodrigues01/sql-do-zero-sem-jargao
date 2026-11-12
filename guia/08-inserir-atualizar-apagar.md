@@ -32,4 +32,4 @@ Se você executar esses exemplos no laboratório, seus dados vão diferir dos da
 
 ---
 
-<p align="center"><a href="07-join.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="09-criar-tabelas.md">Próximo →</a></p>
+<p align="center"><a href="07-join.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="09-criar-tabelas.md">Próximo →</a></p>

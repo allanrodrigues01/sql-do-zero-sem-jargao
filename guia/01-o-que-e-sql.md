@@ -20,4 +20,4 @@ Pense numa planilha de Excel. Ela tem colunas com títulos (nome, cidade, idade)
 
 ---
 
-<p align="center"><a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="02-laboratorio.md">Próximo →</a></p>
+<p align="center"><a href="../README.md">Índice</a> · <a href="02-laboratorio.md">Próximo →</a></p>

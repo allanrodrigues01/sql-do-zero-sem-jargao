@@ -65,4 +65,4 @@ No `LIKE`, o `%` vale por “qualquer coisa”. `'A%'` é “começa com A”, `
 
 ---
 
-<p align="center"><a href="03-select.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="05-order-by-e-limit.md">Próximo →</a></p>
+<p align="center"><a href="03-select.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="05-order-by-e-limit.md">Próximo →</a></p>

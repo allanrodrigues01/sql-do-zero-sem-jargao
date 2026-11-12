@@ -82,4 +82,4 @@ GROUP BY c.nome;
 
 ---
 
-<p align="center"><a href="06-contar-somar-agrupar.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="08-inserir-atualizar-apagar.md">Próximo →</a></p>
+<p align="center"><a href="06-contar-somar-agrupar.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="08-inserir-atualizar-apagar.md">Próximo →</a></p>

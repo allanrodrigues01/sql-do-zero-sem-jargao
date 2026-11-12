@@ -42,4 +42,4 @@ DROP TABLE t;
 
 ---
 
-<p align="center"><a href="11-exercicios.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="13-como-praticar.md">Próximo →</a></p>
+<p align="center"><a href="11-exercicios.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="13-como-praticar.md">Próximo →</a></p>

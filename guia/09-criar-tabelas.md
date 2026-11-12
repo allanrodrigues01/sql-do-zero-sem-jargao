@@ -34,4 +34,4 @@ Para mudar ou remover depois: `ALTER TABLE` (alterar a estrutura) e `DROP TABLE`
 
 ---
 
-<p align="center"><a href="08-inserir-atualizar-apagar.md">← Anterior</a> · <a href="../README.md#o-que-tem-no-guia">Índice</a> · <a href="10-erros-comuns.md">Próximo →</a></p>
+<p align="center"><a href="08-inserir-atualizar-apagar.md">← Anterior</a> · <a href="../README.md">Índice</a> · <a href="10-erros-comuns.md">Próximo →</a></p>
