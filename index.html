@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL do zero: material de estudo para leigos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F2F6F5; --card:#FFFFFF; --ink:#14202B; --muted:#526270; --line:#D3DEDC;
+  --accent:#0B6E75; --accent-ink:#FFFFFF; --head:#E4EEEC; --hl:#FFE9A0; --dim:#8A99A5;
+  --warn-bg:#FFF4E0; --warn-line:#D98A00; --tip-bg:#E3F3F1; --tip-line:#0B6E75;
+  --code-bg:#0F1A24; --code-ink:#E6EDF3;
+  --c-k:#FFB86B; --c-s:#A5E28A; --c-n:#8FB8FF; --c-c:#7C8C99;
+  --sans:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E161D; --card:#15212A; --ink:#E5ECEF; --muted:#9AA9B4; --line:#25333E;
+    --accent:#56C2CB; --accent-ink:#0E161D; --head:#1D2D38; --hl:#5A4A12; --dim:#7D8C97;
+    --warn-bg:#2C2410; --warn-line:#E0A030; --tip-bg:#12272B; --tip-line:#56C2CB;
+    --code-bg:#0A1219;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E161D; --card:#15212A; --ink:#E5ECEF; --muted:#9AA9B4; --line:#25333E;
+  --accent:#56C2CB; --accent-ink:#0E161D; --head:#1D2D38; --hl:#5A4A12; --dim:#7D8C97;
+  --warn-bg:#2C2410; --warn-line:#E0A030; --tip-bg:#12272B; --tip-line:#56C2CB;
+  --code-bg:#0A1219;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.65}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* Hero */
+.hero{max-width:1100px;margin:0 auto;padding:56px 20px 24px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.05;margin:0 0 14px;letter-spacing:-.02em;max-width:16ch}
+.hero p.lead{font-size:1.2rem;color:var(--muted);max-width:52ch;margin:0 0 32px}
+.translate{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:22px 22px 8px;max-width:820px}
+.translate .row{display:flex;flex-wrap:wrap;gap:6px 22px}
+.translate .tok{display:flex;flex-direction:column;padding-bottom:14px}
+.translate code{font-family:var(--mono);font-size:1.05rem;font-weight:600;padding-bottom:6px;border-bottom:2px solid #2C3D4B;margin-bottom:6px}
+.translate code.kw{color:var(--c-k);border-color:var(--c-k)}
+.translate code .s{color:var(--c-s)}
+.translate small{font-size:.9rem;color:#A9B8C4}
+.translate .out{margin:4px -22px 0;padding:14px 22px;border-top:1px solid #22323F;font-size:.95rem;color:#A9B8C4}
+.translate .out b{color:var(--code-ink)}
+
+/* Layout */
+.layout{max-width:1100px;margin:0 auto;padding:16px 20px 80px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:56px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;font-size:.98rem}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+nav.toc a{display:block;padding:6px 0 6px 14px;margin-left:-2px;border-left:2px solid transparent;color:var(--muted);text-decoration:none}
+nav.toc a:hover{color:var(--ink)}
+nav.toc a.on{color:var(--ink);font-weight:700;border-left-color:var(--accent)}
+main{min-width:0;max-width:740px}
+section{padding-top:8px;margin-bottom:64px}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3.6vw,2.2rem);line-height:1.15;margin:0 0 14px;letter-spacing:-.01em}
+h3{font-family:var(--display);font-weight:600;font-size:1.25rem;margin:32px 0 8px}
+p{margin:0 0 16px}
+ul,ol{padding-left:1.3em;margin:0 0 16px}
+li{margin-bottom:6px}
+code.i{font-family:var(--mono);font-size:.88em;background:var(--head);padding:.1em .38em;border-radius:5px}
+
+/* Code */
+pre.sql{position:relative;margin:14px 0 18px;background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:18px 18px;overflow-x:auto;font-family:var(--mono);font-size:.92rem;line-height:1.6;tab-size:2}
+pre.sql code{font-family:inherit;white-space:pre}
+pre.sql .k{color:var(--c-k);font-weight:600}
+pre.sql .s{color:var(--c-s)}
+pre.sql .n{color:var(--c-n)}
+pre.sql .c{color:var(--c-c);font-style:italic}
+.copy{position:absolute;top:8px;right:8px;font:600 .78rem var(--sans);color:#C9D6DF;background:#1C2B37;border:1px solid #2E4050;border-radius:6px;padding:4px 10px;cursor:pointer}
+.copy:hover{background:#26394A}
+pre.sql.has-copy{padding-top:38px}
+
+/* Tables */
+figure.sheet{margin:6px 0 20px;display:inline-block;max-width:100%;vertical-align:top}
+figure.sheet + figure.sheet{margin-left:12px}
+figure.sheet figcaption{font-size:.85rem;color:var(--muted);margin-bottom:5px;font-weight:700}
+figure.sheet.result figcaption::before{content:"Resultado";color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:1px 8px;margin-right:8px;font-weight:700}
+figure.sheet:not(.result) figcaption::before{content:"Tabela";border:1.5px solid var(--muted);border-radius:4px;padding:0 7px;margin-right:8px}
+.scroll{overflow-x:auto;max-width:100%}
+table.g{border-collapse:collapse;background:var(--card);font-size:.95rem;border:1.5px solid var(--line)}
+table.g th,table.g td{border:1px solid var(--line);padding:5px 13px;text-align:left;white-space:nowrap}
+table.g th{background:var(--head);font-family:var(--mono);font-size:.85rem;font-weight:600}
+table.g td.num{text-align:right;font-variant-numeric:tabular-nums}
+table.g td.null{color:var(--dim);font-style:italic;font-family:var(--mono);font-size:.82rem}
+table.g tr.hi td{background:var(--hl)}
+table.g tr.dim td{color:var(--dim)}
+table.g th.hic,table.g td.hic{background:var(--hl)}
+.plain{border-collapse:collapse;width:100%;margin:8px 0 20px;font-size:.96rem;background:var(--card)}
+.plain th,.plain td{border:1px solid var(--line);padding:7px 12px;text-align:left;vertical-align:top}
+.plain th{background:var(--head)}
+.plain code{font-family:var(--mono);font-size:.9em}
+
+/* Callouts */
+.note{border-left:5px solid var(--tip-line);background:var(--tip-bg);padding:12px 16px;border-radius:0 10px 10px 0;margin:18px 0}
+.note.warn{border-left-color:var(--warn-line);background:var(--warn-bg)}
+.note p:last-child{margin-bottom:0}
+.note strong.t{display:block;margin-bottom:2px}
+
+/* Exercises */
+details.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:14px 18px}
+details.ex summary{cursor:pointer;font-weight:700;list-style:none}
+details.ex summary::-webkit-details-marker{display:none}
+details.ex summary::before{content:"+";display:inline-block;width:1.4em;color:var(--accent);font-weight:800}
+details.ex[open] summary::before{content:"−"}
+details.ex .ans{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.lvl{font-size:.8rem;font-weight:700;color:var(--muted);margin-left:8px}
+
+dl.gl dt{font-weight:700;margin-top:14px}
+dl.gl dd{margin:0 0 0 0;color:var(--muted)}
+ol.weeks>li{margin-bottom:14px}
+footer{max-width:1100px;margin:0 auto;padding:0 20px 60px;color:var(--muted);font-size:.9rem}
+
+@media (max-width:900px){
+  body{font-size:17px}
+  .layout{display:block;padding-top:0}
+  nav.toc{position:sticky;top:0;z-index:5;margin:0 -20px 28px;padding:calc(env(safe-area-inset-top,0px) + 8px) 20px 8px;background:var(--bg);border-bottom:1px solid var(--line)}
+  nav.toc ol{display:flex;gap:4px;overflow-x:auto;border-left:0;padding-bottom:2px}
+  nav.toc a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;margin:0;padding:6px 10px}
+  nav.toc a.on{border-bottom-color:var(--accent)}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+  .hero{padding-top:36px}
+  figure.sheet + figure.sheet{margin-left:0}
+}
+@media print{nav.toc,.copy{display:none}.layout{display:block}body{background:#fff}details.ex:not([open]) .ans{display:block}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>SQL do zero, sem jargão</h1>
+  <p class="lead">Um material de estudo para quem nunca mexeu com banco de dados. Cada comando vem com uma explicação em português, um exemplo e o resultado que ele produz.</p>
+
+  <div class="translate" aria-label="Exemplo de consulta SQL traduzida para português">
+    <div class="row">
+      <div class="tok"><code class="kw">SELECT</code><small>mostre</small></div>
+      <div class="tok"><code>nome</code><small>a coluna “nome”</small></div>
+      <div class="tok"><code class="kw">FROM</code><small>da tabela</small></div>
+      <div class="tok"><code>clientes</code><small>“clientes”</small></div>
+      <div class="tok"><code class="kw">WHERE</code><small>somente onde</small></div>
+      <div class="tok"><code>cidade = <span class="s">'Recife'</span></code><small>a cidade for Recife</small></div>
+    </div>
+    <div class="out">Resultado: <b>Ana</b> e <b>Elisa</b>. É isso: SQL é pedir dados quase em frases.</div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Índice">
+<ol>
+  <li><a href="#s1">1. O que é SQL</a></li>
+  <li><a href="#s2">2. Laboratório</a></li>
+  <li><a href="#s3">3. SELECT</a></li>
+  <li><a href="#s4">4. WHERE</a></li>
+  <li><a href="#s5">5. ORDER BY e LIMIT</a></li>
+  <li><a href="#s6">6. Contar e somar</a></li>
+  <li><a href="#s7">7. JOIN</a></li>
+  <li><a href="#s8">8. Alterar dados</a></li>
+  <li><a href="#s9">9. Criar tabelas</a></li>
+  <li><a href="#s10">10. Erros comuns</a></li>
+  <li><a href="#s11">11. Exercícios</a></li>
+  <li><a href="#s12">12. Cola e glossário</a></li>
+  <li><a href="#s13">13. Roteiro de estudo</a></li>
+</ol>
+</nav>
+
+<main>
+
+<section id="s1">
+<h2>1. O que é SQL</h2>
+<p>Pense numa planilha de Excel. Ela tem colunas com títulos (nome, cidade, idade) e linhas com os dados de cada pessoa. Um <strong>banco de dados relacional</strong> é um conjunto de planilhas assim, guardadas num programa que aguenta milhões de linhas e vários usuários ao mesmo tempo.</p>
+<p><strong>SQL</strong> (Structured Query Language, “linguagem de consulta estruturada”) é o idioma que você usa para pedir coisas a esse banco: “me mostre”, “some”, “adicione”, “apague”. Funciona em PostgreSQL, MySQL, SQL Server, Oracle, SQLite e outros, com pequenas diferenças de dialeto.</p>
+
+<h3>Vocabulário mínimo</h3>
+<table class="plain">
+<tr><th>No banco</th><th>Na planilha</th><th>Exemplo</th></tr>
+<tr><td><strong>Tabela</strong></td><td>Uma aba</td><td><code>clientes</code></td></tr>
+<tr><td><strong>Coluna</strong> (campo)</td><td>Título de coluna</td><td><code>nome</code>, <code>idade</code></td></tr>
+<tr><td><strong>Linha</strong> (registro)</td><td>Uma linha</td><td>Os dados da Ana</td></tr>
+<tr><td><strong>Chave primária</strong></td><td>Um código único por linha</td><td><code>id</code></td></tr>
+<tr><td><strong>Consulta</strong> (query)</td><td>Um filtro/relatório</td><td>Um <code>SELECT</code></td></tr>
+</table>
+
+<div class="note"><strong class="t">Uma diferença importante</strong><p>Na planilha você clica e edita. No SQL você <em>escreve o que quer</em> e o banco decide como buscar. Você descreve o resultado, não o caminho.</p></div>
+</section>
+
+<section id="s2">
+<h2>2. Laboratório: prepare seus dados de treino</h2>
+<p>Todos os exemplos usam duas tabelas pequenas. Para praticar de verdade, crie-as num SQLite online (veja a <a href="#s13">seção 13</a>): cole o script abaixo e execute. Depois rode cada exemplo da página e compare com o resultado mostrado.</p>
+
+<pre class="sql copy-me"><code>CREATE TABLE clientes (
+  id     INTEGER PRIMARY KEY,
+  nome   VARCHAR(100) NOT NULL,
+  cidade VARCHAR(50),
+  idade  INTEGER
+);
+
+CREATE TABLE pedidos (
+  id         INTEGER PRIMARY KEY,
+  cliente_id INTEGER,
+  produto    VARCHAR(50),
+  valor      DECIMAL(10,2)
+);
+
+INSERT INTO clientes (id, nome, cidade, idade) VALUES
+  (1, 'Ana',   'Recife',    30),
+  (2, 'Bruno', 'São Paulo', 25),
+  (3, 'Carla', 'São Paulo', 41),
+  (4, 'Diego', 'Curitiba',  17),
+  (5, 'Elisa', 'Recife',    35),
+  (6, 'Fábio', 'Curitiba',  52);
+
+INSERT INTO pedidos (id, cliente_id, produto, valor) VALUES
+  (101, 1, 'Fone',    120),
+  (102, 1, 'Mouse',    60),
+  (103, 3, 'Teclado', 200),
+  (104, 2, 'Fone',    120),
+  (105, 5, 'Monitor', 900);</code></pre>
+
+<p>É assim que as tabelas ficam:</p>
+<figure class="sheet"><figcaption>clientes</figcaption><div class="tbl" data-table="clientes"></div></figure>
+<figure class="sheet"><figcaption>pedidos</figcaption><div class="tbl" data-table="pedidos"></div></figure>
+
+<p>Repare que <code class="i">pedidos.cliente_id</code> guarda o <code class="i">id</code> de um cliente. É assim que as tabelas se “conversam”. Ana (id 1) fez dois pedidos; Diego e Fábio não fizeram nenhum.</p>
+</section>
+
+<section id="s3">
+<h2>3. SELECT: consultar dados</h2>
+<p><code class="i">SELECT</code> significa “mostre”. <code class="i">FROM</code> diz de qual tabela. É o comando que você mais vai usar.</p>
+
+<pre class="sql"><code>SELECT nome, cidade
+FROM clientes;</code></pre>
+<figure class="sheet result"><figcaption>duas colunas, todas as linhas</figcaption><div class="tbl" data-cols="nome|cidade" data-rows="Ana|Recife;Bruno|São Paulo;Carla|São Paulo;Diego|Curitiba;Elisa|Recife;Fábio|Curitiba"></div></figure>
+
+<p>Para trazer todas as colunas, use o asterisco:</p>
+<pre class="sql"><code>SELECT * FROM clientes;</code></pre>
+
+<h3>Apelidos e valores repetidos</h3>
+<pre class="sql"><code>-- AS dá um apelido à coluna no resultado
+SELECT nome AS cliente, idade AS anos
+FROM clientes;
+
+-- DISTINCT remove repetições
+SELECT DISTINCT cidade
+FROM clientes;</code></pre>
+<figure class="sheet result"><figcaption>DISTINCT cidade</figcaption><div class="tbl" data-cols="cidade" data-rows="Recife;São Paulo;Curitiba"></div></figure>
+
+<div class="note"><strong class="t">Regras de escrita</strong><p>O ponto e vírgula (<code class="i">;</code>) encerra o comando. Maiúsculas e minúsculas nos comandos não fazem diferença, mas escrever <code class="i">SELECT</code> em maiúsculas ajuda a ler. Linhas que começam com <code class="i">--</code> são comentários e o banco ignora.</p></div>
+</section>
+
+<section id="s4">
+<h2>4. WHERE: filtrar linhas</h2>
+<p><code class="i">WHERE</code> significa “somente onde”. Ele escolhe quais linhas aparecem.</p>
+
+<pre class="sql"><code>SELECT nome, cidade
+FROM clientes
+WHERE cidade = 'São Paulo';</code></pre>
+<figure class="sheet"><figcaption>clientes (linhas escolhidas em amarelo)</figcaption><div class="tbl" data-table="clientes" data-hi="1,2"></div></figure>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="nome|cidade" data-rows="Bruno|São Paulo;Carla|São Paulo"></div></figure>
+
+<div class="note warn"><strong class="t">Texto vai entre aspas simples</strong><p>Use <code class="i">'São Paulo'</code>, nunca aspas duplas. Números ficam sem aspas: <code class="i">idade = 30</code>.</p></div>
+
+<h3>Os operadores mais usados</h3>
+<table class="plain">
+<tr><th>Operador</th><th>Significa</th><th>Exemplo</th></tr>
+<tr><td><code>=</code> &nbsp; <code>&lt;&gt;</code></td><td>igual / diferente</td><td><code>cidade &lt;&gt; 'Recife'</code></td></tr>
+<tr><td><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td><td>maior, menor…</td><td><code>idade &gt;= 18</code></td></tr>
+<tr><td><code>AND</code></td><td>as duas condições juntas</td><td><code>idade &gt;= 18 AND cidade = 'Recife'</code></td></tr>
+<tr><td><code>OR</code></td><td>uma ou outra</td><td><code>cidade = 'Recife' OR cidade = 'Curitiba'</code></td></tr>
+<tr><td><code>IN</code></td><td>está numa lista</td><td><code>cidade IN ('Recife', 'Curitiba')</code></td></tr>
+<tr><td><code>BETWEEN</code></td><td>entre dois valores (inclusive)</td><td><code>idade BETWEEN 25 AND 35</code></td></tr>
+<tr><td><code>LIKE</code></td><td>texto que combina com um padrão</td><td><code>nome LIKE 'A%'</code></td></tr>
+<tr><td><code>IS NULL</code></td><td>está vazio</td><td><code>cidade IS NULL</code></td></tr>
+</table>
+
+<pre class="sql"><code>SELECT nome, idade
+FROM clientes
+WHERE idade BETWEEN 25 AND 35;</code></pre>
+<figure class="sheet result"><figcaption>Ana 30, Bruno 25, Elisa 35</figcaption><div class="tbl" data-cols="nome|idade" data-rows="Ana|30;Bruno|25;Elisa|35"></div></figure>
+
+<p>No <code class="i">LIKE</code>, o <code class="i">%</code> vale por “qualquer coisa”. <code class="i">'A%'</code> é “começa com A”, <code class="i">'%a'</code> é “termina com a”, <code class="i">'%li%'</code> é “contém li”.</p>
+
+<div class="note warn"><strong class="t">O vazio se chama NULL</strong><p><code class="i">NULL</code> significa “sem valor / desconhecido”. Ele não é zero nem texto vazio. Por isso <code class="i">cidade = NULL</code> nunca funciona; o correto é <code class="i">cidade IS NULL</code> ou <code class="i">IS NOT NULL</code>.</p></div>
+</section>
+
+<section id="s5">
+<h2>5. ORDER BY e LIMIT: ordenar e limitar</h2>
+<pre class="sql"><code>SELECT nome, idade
+FROM clientes
+WHERE idade &gt;= 30
+ORDER BY idade DESC;</code></pre>
+<figure class="sheet result"><figcaption>do mais velho para o mais novo</figcaption><div class="tbl" data-cols="nome|idade" data-rows="Fábio|52;Carla|41;Elisa|35;Ana|30"></div></figure>
+<ul>
+  <li><code class="i">ASC</code> é crescente (o padrão); <code class="i">DESC</code> é decrescente.</li>
+  <li>Dá para ordenar por mais de uma coluna: <code class="i">ORDER BY cidade, idade DESC</code>.</li>
+</ul>
+
+<p>Para pegar só as primeiras linhas, use <code class="i">LIMIT</code>:</p>
+<pre class="sql"><code>SELECT nome, idade
+FROM clientes
+ORDER BY idade DESC
+LIMIT 2;</code></pre>
+<figure class="sheet result"><figcaption>os dois mais velhos</figcaption><div class="tbl" data-cols="nome|idade" data-rows="Fábio|52;Carla|41"></div></figure>
+
+<div class="note"><strong class="t">Dialetos</strong><p>O <code class="i">LIMIT 2</code> funciona em PostgreSQL, MySQL e SQLite. No SQL Server, escreve-se <code class="i">SELECT TOP 2 nome, idade ...</code>. O resto da linguagem é quase igual em todos.</p></div>
+</section>
+
+<section id="s6">
+<h2>6. Contar, somar e agrupar</h2>
+<p>Funções de agregação transformam várias linhas em um número só:</p>
+<table class="plain">
+<tr><th>Função</th><th>Faz</th></tr>
+<tr><td><code>COUNT(*)</code></td><td>conta linhas</td></tr>
+<tr><td><code>SUM(coluna)</code></td><td>soma</td></tr>
+<tr><td><code>AVG(coluna)</code></td><td>média</td></tr>
+<tr><td><code>MIN(coluna)</code> / <code>MAX(coluna)</code></td><td>menor / maior valor</td></tr>
+</table>
+
+<pre class="sql"><code>SELECT COUNT(*) AS total,
+       AVG(idade) AS idade_media,
+       MAX(idade) AS mais_velho
+FROM clientes;</code></pre>
+<figure class="sheet result"><figcaption>uma única linha de resumo</figcaption><div class="tbl" data-cols="total|idade_media|mais_velho" data-rows="6|33.33|52"></div></figure>
+
+<h3>GROUP BY: um resumo por grupo</h3>
+<p><code class="i">GROUP BY</code> separa as linhas em grupos e aplica a função em cada um. Aqui, um total por produto:</p>
+<pre class="sql"><code>SELECT produto,
+       COUNT(*)   AS qtd,
+       SUM(valor) AS total
+FROM pedidos
+GROUP BY produto;</code></pre>
+<figure class="sheet result"><figcaption>um resultado por produto</figcaption><div class="tbl" data-cols="produto|qtd|total" data-rows="Fone|2|240;Mouse|1|60;Teclado|1|200;Monitor|1|900"></div></figure>
+
+<h3>HAVING: filtrar depois de agrupar</h3>
+<pre class="sql"><code>SELECT produto, SUM(valor) AS total
+FROM pedidos
+GROUP BY produto
+HAVING SUM(valor) &gt; 150;</code></pre>
+<figure class="sheet result"><figcaption>só os grupos acima de 150</figcaption><div class="tbl" data-cols="produto|total" data-rows="Fone|240;Teclado|200;Monitor|900"></div></figure>
+
+<div class="note"><strong class="t">WHERE ou HAVING?</strong><p><code class="i">WHERE</code> filtra as <em>linhas</em> antes de agrupar. <code class="i">HAVING</code> filtra os <em>grupos</em> depois de somar ou contar. Se a condição usa <code class="i">SUM</code>, <code class="i">COUNT</code> etc., é HAVING.</p></div>
+</section>
+
+<section id="s7">
+<h2>7. JOIN: juntar tabelas</h2>
+<p>Bancos dividem os dados em várias tabelas para não repetir informação. Em vez de escrever o nome e a cidade da Ana em cada pedido dela, o pedido guarda só o <code class="i">cliente_id = 1</code>. O <code class="i">JOIN</code> é o que junta as duas de volta, casando o <code class="i">id</code> do cliente com o <code class="i">cliente_id</code> do pedido.</p>
+
+<h3>INNER JOIN: só quem tem correspondência</h3>
+<pre class="sql"><code>SELECT c.nome, p.produto, p.valor
+FROM clientes c
+INNER JOIN pedidos p ON p.cliente_id = c.id;</code></pre>
+<p><code class="i">c</code> e <code class="i">p</code> são apelidos das tabelas, para escrever menos. A cláusula <code class="i">ON</code> diz qual coluna casa com qual.</p>
+<figure class="sheet result"><figcaption>Diego e Fábio somem: não têm pedidos</figcaption><div class="tbl" data-cols="nome|produto|valor" data-rows="Ana|Fone|120;Ana|Mouse|60;Bruno|Fone|120;Carla|Teclado|200;Elisa|Monitor|900"></div></figure>
+
+<h3>LEFT JOIN: todos da esquerda, com ou sem correspondência</h3>
+<pre class="sql"><code>SELECT c.nome, p.produto, p.valor
+FROM clientes c
+LEFT JOIN pedidos p ON p.cliente_id = c.id;</code></pre>
+<figure class="sheet result"><figcaption>Diego e Fábio aparecem, com NULL onde não há pedido</figcaption><div class="tbl" data-cols="nome|produto|valor" data-rows="Ana|Fone|120;Ana|Mouse|60;Bruno|Fone|120;Carla|Teclado|200;Diego|NULL|NULL;Elisa|Monitor|900;Fábio|NULL|NULL" data-hi="4,6"></div></figure>
+
+<h3>Um truque útil: quem nunca comprou?</h3>
+<pre class="sql"><code>SELECT c.nome
+FROM clientes c
+LEFT JOIN pedidos p ON p.cliente_id = c.id
+WHERE p.id IS NULL;</code></pre>
+<figure class="sheet result"><figcaption>clientes sem nenhum pedido</figcaption><div class="tbl" data-cols="nome" data-rows="Diego;Fábio"></div></figure>
+
+<h3>Juntando com totais</h3>
+<pre class="sql"><code>SELECT c.nome, SUM(p.valor) AS total_gasto
+FROM clientes c
+INNER JOIN pedidos p ON p.cliente_id = c.id
+GROUP BY c.nome;</code></pre>
+<figure class="sheet result"><figcaption>total gasto por cliente</figcaption><div class="tbl" data-cols="nome|total_gasto" data-rows="Ana|180;Bruno|120;Carla|200;Elisa|900"></div></figure>
+
+<div class="note"><strong class="t">Regra prática</strong><p>Quer só o que existe nas duas tabelas? <code class="i">INNER JOIN</code>. Quer manter todos de uma tabela mesmo sem correspondência? <code class="i">LEFT JOIN</code> dessa tabela.</p></div>
+</section>
+
+<section id="s8">
+<h2>8. Inserir, atualizar e apagar</h2>
+<p>Até aqui só lemos dados. Estes três comandos <em>alteram</em> o banco.</p>
+
+<pre class="sql"><code>-- Inserir uma linha nova
+INSERT INTO clientes (id, nome, cidade, idade)
+VALUES (7, 'Gustavo', 'Salvador', 28);
+
+-- Atualizar linhas existentes
+UPDATE clientes
+SET cidade = 'Olinda'
+WHERE id = 5;
+
+-- Apagar linhas
+DELETE FROM pedidos
+WHERE id = 102;</code></pre>
+
+<div class="note warn"><strong class="t">Sem WHERE, vale para a tabela inteira</strong>
+<p><code class="i">UPDATE clientes SET cidade = 'Olinda';</code> muda a cidade de <em>todos</em> os clientes. <code class="i">DELETE FROM pedidos;</code> apaga <em>todos</em> os pedidos. Não há botão de desfazer por padrão.</p></div>
+
+<h3>Hábitos que evitam desastres</h3>
+<ol>
+  <li>Escreva primeiro um <code class="i">SELECT</code> com o mesmo <code class="i">WHERE</code> e confira quais linhas aparecem.</li>
+  <li>Só então troque o <code class="i">SELECT</code> por <code class="i">UPDATE</code> ou <code class="i">DELETE</code>.</li>
+  <li>Em bancos de trabalho, faça backup antes e peça a alguém experiente para revisar.</li>
+  <li>Se o seu banco permite, use transações: <code class="i">BEGIN;</code> abre, <code class="i">ROLLBACK;</code> desfaz, <code class="i">COMMIT;</code> confirma.</li>
+</ol>
+<p>Se você executar esses exemplos no laboratório, seus dados vão diferir dos das seções anteriores. Basta recriar as tabelas com o script da seção 2.</p>
+</section>
+
+<section id="s9">
+<h2>9. Criar tabelas</h2>
+<pre class="sql"><code>CREATE TABLE pedidos (
+  id         INTEGER PRIMARY KEY,
+  cliente_id INTEGER NOT NULL,
+  produto    VARCHAR(50) NOT NULL,
+  valor      DECIMAL(10,2) DEFAULT 0,
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);</code></pre>
+<p>Cada linha dentro dos parênteses é uma coluna: <strong>nome</strong>, <strong>tipo</strong> e, se quiser, <strong>regras</strong>.</p>
+
+<h3>Tipos mais comuns</h3>
+<table class="plain">
+<tr><th>Tipo</th><th>Guarda</th></tr>
+<tr><td><code>INTEGER</code></td><td>números inteiros</td></tr>
+<tr><td><code>DECIMAL(10,2)</code></td><td>números com casas decimais (dinheiro): até 10 dígitos, 2 depois da vírgula</td></tr>
+<tr><td><code>VARCHAR(n)</code> / <code>TEXT</code></td><td>texto</td></tr>
+<tr><td><code>DATE</code></td><td>datas</td></tr>
+<tr><td><code>BOOLEAN</code></td><td>verdadeiro ou falso</td></tr>
+</table>
+
+<h3>Regras (constraints)</h3>
+<ul>
+  <li><code class="i">PRIMARY KEY</code>: identifica cada linha de forma única, sem repetição.</li>
+  <li><code class="i">NOT NULL</code>: a coluna não pode ficar vazia.</li>
+  <li><code class="i">UNIQUE</code>: não permite valores repetidos (ex.: e-mail).</li>
+  <li><code class="i">DEFAULT</code>: valor usado quando você não informa nenhum.</li>
+  <li><code class="i">FOREIGN KEY</code> (chave estrangeira): garante que <code class="i">cliente_id</code> aponte para um cliente que existe.</li>
+</ul>
+<p>Para mudar ou remover depois: <code class="i">ALTER TABLE</code> (alterar a estrutura) e <code class="i">DROP TABLE</code> (apagar a tabela inteira, com cuidado).</p>
+</section>
+
+<section id="s10">
+<h2>10. Erros comuns de iniciante</h2>
+<ul>
+  <li><strong>Aspas erradas.</strong> Texto usa aspas simples: <code class="i">'Recife'</code>.</li>
+  <li><strong>Esquecer o WHERE</strong> em <code class="i">UPDATE</code> e <code class="i">DELETE</code>.</li>
+  <li><strong>Comparar com NULL usando =.</strong> Use <code class="i">IS NULL</code>.</li>
+  <li><strong>Coluna solta no GROUP BY.</strong> Todo campo do <code class="i">SELECT</code> que não é função de agregação precisa estar no <code class="i">GROUP BY</code>.</li>
+  <li><strong>Vírgula sobrando ou faltando</strong> na lista de colunas. A última coluna não leva vírgula.</li>
+  <li><strong>Confundir WHERE com HAVING.</strong> Veja a seção 6.</li>
+  <li><strong>Escrever na ordem errada.</strong> A ordem é fixa:</li>
+</ul>
+<pre class="sql"><code>SELECT   colunas
+FROM     tabela
+JOIN     outra_tabela ON ...
+WHERE    filtro_de_linhas
+GROUP BY grupos
+HAVING   filtro_de_grupos
+ORDER BY ordenacao
+LIMIT    quantidade;</code></pre>
+<p>Ler a mensagem de erro ajuda mais do que parece: quase sempre ela aponta a linha ou a palavra onde o banco se perdeu.</p>
+</section>
+
+<section id="s11">
+<h2>11. Exercícios</h2>
+<p>Tente resolver cada um no laboratório <em>antes</em> de abrir a resposta. Errar e corrigir é onde o aprendizado acontece.</p>
+
+<details class="ex"><summary>1. Mostre o nome e a idade de todos os clientes. <span class="lvl">fácil</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT nome, idade
+FROM clientes;</code></pre></div></details>
+
+<details class="ex"><summary>2. Mostre todas as colunas dos clientes de Curitiba. <span class="lvl">fácil</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT *
+FROM clientes
+WHERE cidade = 'Curitiba';</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="id|nome|cidade|idade" data-rows="4|Diego|Curitiba|17;6|Fábio|Curitiba|52"></div></figure></div></details>
+
+<details class="ex"><summary>3. Liste nome e idade de quem tem mais de 30 anos, do mais novo para o mais velho. <span class="lvl">fácil</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT nome, idade
+FROM clientes
+WHERE idade &gt; 30
+ORDER BY idade ASC;</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="nome|idade" data-rows="Elisa|35;Carla|41;Fábio|52"></div></figure></div></details>
+
+<details class="ex"><summary>4. Quantos pedidos existem? <span class="lvl">fácil</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT COUNT(*) AS total_pedidos
+FROM pedidos;</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="total_pedidos" data-rows="5"></div></figure></div></details>
+
+<details class="ex"><summary>5. Qual o cliente mais velho? <span class="lvl">médio</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT nome, idade
+FROM clientes
+ORDER BY idade DESC
+LIMIT 1;</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="nome|idade" data-rows="Fábio|52"></div></figure></div></details>
+
+<details class="ex"><summary>6. Mostre o total gasto por cliente (nome e soma). <span class="lvl">médio</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT c.nome, SUM(p.valor) AS total
+FROM clientes c
+INNER JOIN pedidos p ON p.cliente_id = c.id
+GROUP BY c.nome;</code></pre>
+<figure class="sheet result"><figcaption>resultado (a ordem pode variar)</figcaption><div class="tbl" data-cols="nome|total" data-rows="Ana|180;Bruno|120;Carla|200;Elisa|900"></div></figure></div></details>
+
+<details class="ex"><summary>7. Quais clientes nunca fizeram pedido? <span class="lvl">médio</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT c.nome
+FROM clientes c
+LEFT JOIN pedidos p ON p.cliente_id = c.id
+WHERE p.id IS NULL;</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="nome" data-rows="Diego;Fábio"></div></figure></div></details>
+
+<details class="ex"><summary>8. Desafio: quais clientes gastaram mais de 150 no total? <span class="lvl">desafio</span></summary>
+<div class="ans"><pre class="sql"><code>SELECT c.nome, SUM(p.valor) AS total
+FROM clientes c
+INNER JOIN pedidos p ON p.cliente_id = c.id
+GROUP BY c.nome
+HAVING SUM(p.valor) &gt; 150;</code></pre>
+<figure class="sheet result"><figcaption>resultado</figcaption><div class="tbl" data-cols="nome|total" data-rows="Ana|180;Carla|200;Elisa|900"></div></figure></div></details>
+</section>
+
+<section id="s12">
+<h2>12. Folha de cola e glossário</h2>
+<pre class="sql"><code>-- CONSULTAR
+SELECT col1, col2 FROM tabela;
+SELECT DISTINCT col FROM tabela;
+SELECT * FROM tabela WHERE col = 'texto' AND num &gt; 10;
+SELECT * FROM tabela ORDER BY col DESC LIMIT 5;
+
+-- RESUMIR
+SELECT COUNT(*), SUM(col), AVG(col), MIN(col), MAX(col) FROM tabela;
+SELECT grupo, COUNT(*) FROM tabela GROUP BY grupo HAVING COUNT(*) &gt; 1;
+
+-- JUNTAR
+SELECT a.col, b.col
+FROM a INNER JOIN b ON b.a_id = a.id;   -- só correspondências
+FROM a LEFT JOIN  b ON b.a_id = a.id;   -- todos de a
+
+-- ALTERAR (sempre com WHERE!)
+INSERT INTO tabela (col1, col2) VALUES ('x', 1);
+UPDATE tabela SET col1 = 'y' WHERE id = 1;
+DELETE FROM tabela WHERE id = 1;
+
+-- ESTRUTURA
+CREATE TABLE t (id INTEGER PRIMARY KEY, nome VARCHAR(50) NOT NULL);
+ALTER TABLE t ADD COLUMN idade INTEGER;
+DROP TABLE t;</code></pre>
+
+<h3>Glossário</h3>
+<dl class="gl">
+<dt>Banco de dados</dt><dd>Conjunto organizado de tabelas guardadas e gerenciadas por um programa (o SGBD).</dd>
+<dt>SGBD</dt><dd>Sistema Gerenciador de Banco de Dados: PostgreSQL, MySQL, SQL Server, SQLite, Oracle.</dd>
+<dt>Tabela, linha, coluna</dt><dd>A “aba”, um registro e um campo, respectivamente.</dd>
+<dt>Chave primária (PK)</dt><dd>Coluna que identifica cada linha de forma única, como um CPF.</dd>
+<dt>Chave estrangeira (FK)</dt><dd>Coluna que aponta para a chave primária de outra tabela, criando a ligação entre elas.</dd>
+<dt>Consulta (query)</dt><dd>Qualquer comando SQL enviado ao banco, especialmente um <code class="i">SELECT</code>.</dd>
+<dt>Agregação</dt><dd>Transformar várias linhas em um resultado: contar, somar, tirar a média.</dd>
+<dt>JOIN</dt><dd>Combinar linhas de duas tabelas a partir de uma coluna em comum.</dd>
+<dt>NULL</dt><dd>Ausência de valor.</dd>
+<dt>Transação</dt><dd>Grupo de comandos que só valem se todos derem certo; pode ser desfeito com <code class="i">ROLLBACK</code>.</dd>
+</dl>
+</section>
+
+<section id="s13">
+<h2>13. Como praticar e roteiro de estudo</h2>
+<h3>Onde executar SQL sem instalar nada</h3>
+<ul>
+  <li><strong>SQLite Online</strong> (sqliteonline.com) e <strong>DB Fiddle</strong> (db-fiddle.com): cole o script da seção 2 e rode.</li>
+  <li><strong>SQLBolt</strong> (sqlbolt.com): lições curtas e interativas, em inglês.</li>
+  <li><strong>W3Schools SQL</strong>: cada exemplo tem um botão “Try it” que executa no navegador.</li>
+  <li><strong>SQL Murder Mystery</strong> (mystery.knightlab.com): resolva um crime usando consultas. Divertido para fixar.</li>
+  <li><strong>DB Browser for SQLite</strong>: programa gratuito para instalar no computador, quando quiser algo local.</li>
+</ul>
+<p>Prefira SQLite para começar: não exige servidor nem configuração.</p>
+
+<h3>Roteiro em 4 semanas (20 a 30 minutos por dia)</h3>
+<ol class="weeks">
+  <li><strong>Semana 1: ler dados.</strong> Seções 1 a 5. Monte o laboratório e refaça cada exemplo digitando, sem copiar e colar. Exercícios 1 a 3.</li>
+  <li><strong>Semana 2: resumir dados.</strong> Seção 6. Invente perguntas sobre as tabelas (“qual a média por cidade?”) e responda com SQL. Exercícios 4 e 5.</li>
+  <li><strong>Semana 3: juntar tabelas.</strong> Seção 7, a que mais assusta e mais recompensa. Desenhe no papel qual coluna casa com qual antes de escrever o JOIN. Exercícios 6 a 8.</li>
+  <li><strong>Semana 4: alterar e criar.</strong> Seções 8 e 9, sempre num banco de treino. Depois monte um mini banco seu (livros, gastos do mês, coleção de filmes) e consulte-o.</li>
+</ol>
+
+<div class="note"><strong class="t">Próximos passos</strong><p>Quando isso estiver confortável, os assuntos seguintes são subconsultas (um <code class="i">SELECT</code> dentro de outro), <code class="i">CASE WHEN</code> (condições dentro da consulta), funções de data e texto, <em>window functions</em> e modelagem de bancos (como decidir quais tabelas criar).</p></div>
+</section>
+
+</main>
+</div>
+
+<footer>Material de estudo introdutório. Os exemplos usam sintaxe compatível com SQLite, PostgreSQL e MySQL, exceto onde indicado.</footer>
+
+<script>
+(function(){
+  var DB = {
+    clientes:{cols:['id','nome','cidade','idade'],rows:[[1,'Ana','Recife',30],[2,'Bruno','São Paulo',25],[3,'Carla','São Paulo',41],[4,'Diego','Curitiba',17],[5,'Elisa','Recife',35],[6,'Fábio','Curitiba',52]]},
+    pedidos:{cols:['id','cliente_id','produto','valor'],rows:[[101,1,'Fone',120],[102,1,'Mouse',60],[103,3,'Teclado',200],[104,2,'Fone',120],[105,5,'Monitor',900]]}
+  };
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+  // Tabelas
+  document.querySelectorAll('.tbl').forEach(function(el){
+    var cols, rows, d = el.dataset;
+    if(d.table){cols=DB[d.table].cols;rows=DB[d.table].rows}
+    else{cols=d.cols.split('|');rows=d.rows.split(';').map(function(r){return r.split('|')})}
+    var hi={},dim={},hic={};
+    (d.hi||'').split(',').filter(Boolean).forEach(function(i){hi[i]=1});
+    (d.hicols||'').split(',').filter(Boolean).forEach(function(c){hic[c]=1});
+    var hasHi = Object.keys(hi).length>0;
+    var h='<table class="g"><thead><tr>'+cols.map(function(c){return '<th class="'+(hic[c]?'hic':'')+'">'+esc(c)+'</th>'}).join('')+'</tr></thead><tbody>';
+    rows.forEach(function(r,i){
+      var cls = hi[i]?'hi':(hasHi?'dim':'');
+      h+='<tr class="'+cls+'">'+r.map(function(v,j){
+        if(v===null||v==='NULL')return '<td class="null">NULL</td>';
+        var num = typeof v==='number'||/^-?\d+([.,]\d+)?$/.test(v);
+        return '<td class="'+(num?'num':'')+(hic[cols[j]]?' hic':'')+'">'+esc(v)+'</td>';
+      }).join('')+'</tr>';
+    });
+    h+='</tbody></table>';
+    var wrap=document.createElement('div');wrap.className='scroll';wrap.innerHTML=h;
+    el.replaceWith(wrap);
+  });
+
+  // Figuras: marca resultado
+  document.querySelectorAll('figure.sheet.result').forEach(function(f){});
+
+  // Realce de sintaxe
+  var KW='SELECT|FROM|WHERE|AND|OR|NOT|ORDER\\s+BY|GROUP\\s+BY|HAVING|LIMIT|TOP|INSERT\\s+INTO|VALUES|UPDATE|SET|DELETE\\s+FROM|DELETE|CREATE\\s+TABLE|ALTER\\s+TABLE|DROP\\s+TABLE|ADD\\s+COLUMN|PRIMARY\\s+KEY|FOREIGN\\s+KEY|REFERENCES|NOT\\s+NULL|INNER\\s+JOIN|LEFT\\s+JOIN|JOIN|ON|AS|IN|LIKE|BETWEEN|IS|NULL|ASC|DESC|DISTINCT|COUNT|SUM|AVG|MIN|MAX|INTEGER|VARCHAR|DECIMAL|DATE|BOOLEAN|TEXT|DEFAULT|UNIQUE|BEGIN|COMMIT|ROLLBACK';
+  var RX=new RegExp("(--[^\\n]*)|('(?:[^']|'')*')|(\\b\\d+(?:\\.\\d+)?\\b)|(\\b(?:"+KW+")\\b)","gi");
+  document.querySelectorAll('pre.sql code').forEach(function(code){
+    var src=code.textContent,out='',last=0,m;
+    RX.lastIndex=0;
+    while((m=RX.exec(src))){
+      out+=esc(src.slice(last,m.index));
+      var cls=m[1]?'c':m[2]?'s':m[3]?'n':'k';
+      out+='<span class="'+cls+'">'+esc(m[0])+'</span>';
+      last=RX.lastIndex;
+    }
+    out+=esc(src.slice(last));
+    code.innerHTML=out;
+  });
+
+  // Botão copiar no script do laboratório
+  document.querySelectorAll('pre.copy-me').forEach(function(pre){
+    pre.classList.add('has-copy');
+    var b=document.createElement('button');b.type='button';b.className='copy';b.textContent='Copiar script';
+    b.addEventListener('click',function(){
+      var text=pre.querySelector('code').textContent;
+      function done(ok){b.textContent=ok?'Copiado':'Selecione e copie (Ctrl+C)';setTimeout(function(){b.textContent='Copiar script'},2200)}
+      try{
+        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){done(true)},function(){fallback()})}
+        else fallback();
+      }catch(e){fallback()}
+      function fallback(){
+        try{var r=document.createRange();r.selectNodeContents(pre.querySelector('code'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);done(document.execCommand('copy'))}catch(e){done(false)}
+      }
+    });
+    pre.appendChild(b);
+  });
+
+  // Índice: destaque da seção atual
+  var links=[].slice.call(document.querySelectorAll('nav.toc a'));
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){links.forEach(function(a){a.classList.remove('on')});var a=map[e.target.id];if(a){a.classList.add('on');
+          var nav=a.closest('ol');if(nav&&nav.scrollWidth>nav.clientWidth){try{nav.scrollTo({left:a.offsetLeft-20})}catch(_){}}}}
+      });
+    },{rootMargin:'-15% 0px -75% 0px'});
+    document.querySelectorAll('main section').forEach(function(s){io.observe(s)});
+  }
+})();
+</script>
+</body>
+</html>
